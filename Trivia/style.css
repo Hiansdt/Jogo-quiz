@@ -1,0 +1,37 @@
+body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.resposta {
+    display: none;
+}
+
+.confirmar {
+    display: none;
+}
+
+.show {
+    display: none;
+    flex-direction: column;
+    border: 1px solid;
+    width: 400px;
+    text-align: center;
+}
+
+.escolhas {
+    flex-direction: column;
+    border: 1px solid;
+    width: 350px;
+    text-align: center;
+}
+
+p {
+    font-size: larger;
+    font-weight: bolder;
+}
+
+.pergunta {
+    border: 1px solid;
+}
