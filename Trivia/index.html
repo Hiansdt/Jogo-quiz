@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <title>Jogo</title>
 </head>
+
 <body>
 
     <div class="escolhas">
@@ -90,7 +92,7 @@
         </div>
 
         <p class="valid">
-            
+
         </p>
 
         <button class="confirmar">Confirm</button>
@@ -98,12 +100,12 @@
         <button class="novaPerg">New Question</button>
 
         <div class="scoreCont">
-            Correct: 
+            Correct:
             <p class="scorePos">
                 0
             </p>
             <br>
-            Incorrect: 
+            Incorrect:
             <p class="scoreNeg">
                 0
             </p>
@@ -115,7 +117,7 @@
 
         let perg = document.querySelector(".pergunta");
         let dificuldade = document.querySelector(".dificuldade");
-        let categoria = document.querySelector(".categoria");   
+        let categoria = document.querySelector(".categoria");
         let valid = document.querySelector(".valid");
         let confirmar = document.querySelector(".confirmar");
         let resp = document.querySelector(".resp");
@@ -132,23 +134,27 @@
         let dif = document.querySelector("#difficulty");
         let type = document.querySelector("#type");
         let jogar = document.querySelector(".load");
-        
+
         //alert(cat.value);
 
         let rndm;
         let usedNumbers = [-1];
 
-        nova.addEventListener("click", frasear);
+
+        function novaClick() {
+            nova.addEventListener("click", frasear);
+        }
+        novaClick();
 
         jogar.addEventListener("click", buscar);
 
         let url;
-        
+
         let typeChoice;
         let difChoice;
 
         function buscar() {
-            if(dif.value === "1") {
+            if (dif.value === "1") {
                 difChoice = "hard";
             } else if (dif.value === "2") {
                 difChoice = "medium";
@@ -156,13 +162,13 @@
                 difChoice = "easy";
             }
 
-            if(type.value === "1") {
-                typeChoice = "multiple"; 
+            if (type.value === "1") {
+                typeChoice = "multiple";
             } else if (type.value === "2") {
                 typeChoice = "boolean";
             }
 
-            if(cat.value === "0" && dif.value === "0" && type.value === "0") {
+            if (cat.value === "0" && dif.value === "0" && type.value === "0") {
                 url = `https://opentdb.com/api.php?amount=${quantity.value}`;
             } else if (cat.value !== "0" && dif.value === "0" && type.value === "0") {
                 url = `https://opentdb.com/api.php?amount=${quantity.value}&category=${cat.value}`;
@@ -187,73 +193,84 @@
         }
 
         let respostaInner;
+        let jsonOne;
+        let check;
+        let h = -1;
 
         function frasear() {
+
+            h++
+
             if (respostaInner) {
                 respostaInner.remove();
             }
-            fetch(url)
-            .then(response => {return response.json()})
-            .then(json => {
-                if (json["results"][0] && quantity.value <= 50) {
 
-                rndm = Math.floor(Math.random() * Number(quantity.value));
+            if (frasear.caller) {
+                alert(frasear.caller)
+                fetch(url)
+                    .then(response => { return response.json() })
+                    .then(json => {
+                        jsonOne = json;
+                        if (json["results"][0] && quantity.value <= 50) {
 
-                function check() {
-                for(nu of usedNumbers) {
-                    if (rndm === nu) {
-                        rndm = Math.floor(Math.random() * Number(quantity.value));
-                        usedNumbers.push(rndm);
-                    }
-                }
-            }
-
-            check();
-                categoria.innerHTML = `Category: ${json["results"][rndm].category}`
-                dificuldade.innerHTML = `Difficulty: ${json["results"][rndm].difficulty}`
-                perg.innerHTML = `Question: ${json["results"][rndm].question}`
-                confirmar.style.display = "block";
-                resp.style.display = "block";
-                tipo.innerHTML = `Type: ${json["results"][rndm].type}`
-                valid.innerHTML = "";
-
-                if(json["results"][rndm].type === "multiple") {
-                    respostaInner = document.createElement("input");
-                } else {
-                    respostaInner = document.createElement("select");
-                    let optionTrue = document.createElement("option");
-                    optionTrue.value = "True";
-                    optionTrue.innerHTML = "True";
-
-                    let optionFalse = document.createElement("option");
-                    optionFalse.value = "False";
-                    optionFalse.innerHTML = "False";
-
-                    respostaInner.appendChild(optionTrue);
-                    respostaInner.appendChild(optionFalse);
-                }
-
-                resp.appendChild(respostaInner);
-
-                confirmar.addEventListener("click", ()=> {
-
-                    if ((respostaInner.value).toLowerCase() === (json["results"][rndm].correct_answer).toLowerCase()) {
-                        valid.innerHTML = "Correct!";
-                        scorePos.innerHTML = Number(scorePos.innerHTML) + 1
-                    } else {
-                        valid.innerHTML = "Incorrect :( <br>Right Answer: " + json["results"][rndm].correct_answer;
-                        scoreNeg.innerHTML = Number(scoreNeg.innerHTML) + 1
-                    }
-                })
-                resp.value === "";
+                            rndm = Math.floor(Math.random() * Number(quantity.value));
+                            two();
+                        } else {
+                            menu.style.display = "flex";
+                            show.style.display = "none";
+                        }
+                    })
             } else {
-                show.style.display = "none";
-                menu.style.display = "block" 
-                alert("Typed question amount greater than avaible amount! Try again with a lower value (Avaible questions for category: 50)")
+
+                two();
             }
-        })
+            function two() {
+                if (jsonOne["results"][h]) {
+                    categoria.innerHTML = `Category: ${jsonOne["results"][h].category}`
+                    dificuldade.innerHTML = `Difficulty: ${jsonOne["results"][h].difficulty}`
+                    perg.innerHTML = `Question: ${jsonOne["results"][h].question}`
+                    confirmar.style.display = "block";
+                    resp.style.display = "block";
+                    tipo.innerHTML = `Type: ${jsonOne["results"][h].type}`
+                    valid.innerHTML = "";
+
+                    if (jsonOne["results"][h].type === "multiple") {
+                        respostaInner = document.createElement("select");
+                        let 
+                    } else {
+                        respostaInner = document.createElement("select");
+                        let optionTrue = document.createElement("option");
+                        optionTrue.value = "True";
+                        optionTrue.innerHTML = "True";
+
+                        let optionFalse = document.createElement("option");
+                        optionFalse.value = "False";
+                        optionFalse.innerHTML = "False";
+
+                        respostaInner.appendChild(optionTrue);
+                        respostaInner.appendChild(optionFalse);
+                    }
+
+                    resp.appendChild(respostaInner);
+
+                    confirmar.addEventListener("click", () => {
+
+                        if ((respostaInner.value).toLowerCase() === (jsonOne["results"][h].correct_answer).toLowerCase()) {
+                            valid.innerHTML = "Correct!";
+                            scorePos.innerHTML = Number(scorePos.innerHTML) + 1
+                        } else {
+                            valid.innerHTML = "Incorrect :( <br>Right Answer: " + jsonOne["results"][h].correct_answer;
+                            scoreNeg.innerHTML = Number(scoreNeg.innerHTML) + 1
+                        }
+                    })
+                    resp.value === "";
+                } else {
+                    alert("Você chegou ao fim!");
+                }
+            }
         }
 
     </script>
 </body>
+
 </html>
